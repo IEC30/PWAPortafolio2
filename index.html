@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>PWA Unidad 2</title>
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/persona5.png" type="image/png" />
+  <link rel="apple-touch-icon" href="icons/persona5.png" />
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin="" />
+
+  <!-- Estilos del Proyecto -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="header-title-box">
+        <h1>PWA Unidad 2</h1>
+        <p>Laboratorio de Prácticas</p>
+      </div>
+      <div>
+        <span id="global-net-badge" class="badge badge-green">Online</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Banner Instalación -->
+  <div class="main-content">
+    <div id="install-banner" class="card hidden" style="padding: 1.25rem 2rem; margin-bottom: 1.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <strong>Instalar aplicación</strong>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Puedes añadir esta PWA a tu pantalla de inicio.</p>
+        </div>
+        <div class="btn-group" style="margin: 0;">
+          <button id="btn-install" type="button" class="btn btn-blue">Instalar</button>
+          <button id="btn-dismiss-install" type="button" class="btn" style="background:#f1f5f9; color:#475569;">Ahora no</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pestañas de Navegación -->
+  <nav class="tab-nav" aria-label="Navegación de ejercicios">
+    <button class="tab-btn active" data-view="view-ejercicio1">Ejercicio 1</button>
+    <button class="tab-btn" data-view="view-ejercicio2">Ejercicio 2</button>
+    <button class="tab-btn" data-view="view-ejercicio3">Ejercicio 3</button>
+    <button class="tab-btn" data-view="view-ejercicio4">Ejercicio 4</button>
+    <button class="tab-btn" data-view="view-ejercicio5">Ejercicio 5</button>
+  </nav>
+
+  <!-- Vistas -->
+  <main class="main-content">
+
+    <!-- ==========================================
+         EJERCICIO 1
+         ========================================== -->
+    <section id="view-ejercicio1" class="view-section active">
+      <div class="card">
+        <div class="card-header-row">
+          <h2 class="card-title">Ejercicio 1</h2>
+          <div>
+            <span style="font-size: 0.85rem; color: var(--text-muted); margin-right: 0.5rem;">Permiso:</span>
+            <span id="perm-badge" class="badge" data-state="unknown">Consultando...</span>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button id="btn-locate" type="button" class="btn btn-blue">Obtener ubicación</button>
+          <button id="btn-copy-geo" type="button" class="btn btn-green" disabled>Copiar coordenadas</button>
+          <button id="btn-clear-geo" type="button" class="btn btn-red">Limpiar</button>
+        </div>
+
+        <div id="geo-error" class="alert alert-danger hidden" role="alert"></div>
+
+        <div id="geo-result" class="hidden">
+          <div class="coords-grid">
+            <div class="coord-box">
+              <div class="coord-label">Latitud</div>
+              <div id="out-lat" class="coord-val">—</div>
+            </div>
+            <div class="coord-box">
+              <div class="coord-label">Longitud</div>
+              <div id="out-lon" class="coord-val">—</div>
+            </div>
+            <div class="coord-box">
+              <div class="coord-label">Precisión</div>
+              <div id="out-acc" class="coord-val">—</div>
+            </div>
+            <div class="coord-box">
+              <div class="coord-label">Hora</div>
+              <div id="out-time" class="coord-val" style="font-size: 1rem;">—</div>
+            </div>
+          </div>
+
+          <p style="font-size: 0.875rem; margin-top: 1rem;">
+            Ver en:
+            <a id="link-maps" href="#" target="_blank" rel="noopener" style="color:var(--btn-blue); font-weight:600;">Google Maps</a> ·
+            <a id="link-osm" href="#" target="_blank" rel="noopener" style="color:var(--btn-blue); font-weight:600;">OpenStreetMap</a>
+          </p>
+        </div>
+
+        <div id="map" role="img" aria-label="Mapa interactivo"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         EJERCICIO 2
+         ========================================== -->
+    <section id="view-ejercicio2" class="view-section">
+      <div class="card">
+        <div class="card-header-row">
+          <h2 class="card-title">Ejercicio 2</h2>
+          <div>
+            <span id="camera-badge" class="badge badge-yellow">Apagada</span>
+            <span id="camera-info-res" style="font-size: 0.85rem; color: var(--text-muted); margin-left: 0.5rem;"></span>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button id="btn-start-camera" type="button" class="btn btn-green">Encender cámara</button>
+          <button id="btn-take-photo" type="button" class="btn btn-green" disabled>Tomar foto</button>
+          <button id="btn-switch-camera" type="button" class="btn btn-blue" disabled>Cambiar cámara</button>
+          <button id="btn-download-photo" type="button" class="btn btn-yellow" disabled>Descargar foto</button>
+          <button id="btn-stop-camera" type="button" class="btn btn-red" disabled>Apagar cámara</button>
+        </div>
+
+        <div id="camera-error" class="alert alert-danger hidden" role="alert"></div>
+
+        <div class="media-grid">
+          <div class="media-card">
+            <h3 class="media-card-title">Vista en vivo</h3>
+            <div class="media-preview-box">
+              <video id="camera-stream" autoplay playsinline muted></video>
+              <div id="camera-placeholder" style="position: absolute; text-align: center;">
+                <p style="font-size: 0.9rem;">Cámara apagada</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="media-card">
+            <h3 class="media-card-title">Captura</h3>
+            <div class="media-preview-box">
+              <canvas id="photo-canvas"></canvas>
+              <div id="canvas-placeholder" style="position: absolute; text-align: center;">
+                <p style="font-size: 0.9rem;">Sin fotografía</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         EJERCICIO 3
+         ========================================== -->
+    <section id="view-ejercicio3" class="view-section">
+      <div class="card">
+        <div class="card-header-row">
+          <h2 class="card-title">Ejercicio 3</h2>
+          <div>
+            <span style="font-size: 0.85rem; color: var(--text-muted); margin-right: 0.5rem;">Permiso:</span>
+            <span id="notify-perm-badge" class="badge" data-state="unknown">Consultando...</span>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="notify-title">Título</label>
+            <input type="text" id="notify-title" class="form-control" value="Aviso PWA" />
+          </div>
+
+          <div class="form-group">
+            <label for="notify-body">Mensaje</label>
+            <input type="text" id="notify-body" class="form-control" value="Notificación local desde el Service Worker." />
+          </div>
+
+          <div class="form-group">
+            <label for="notify-icon-select">Ícono</label>
+            <select id="notify-icon-select" class="form-control">
+              <option value="icons/persona5.png">persona5.png</option>
+              <option value="icons/carafeliz.png">carafeliz.png</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="justify-content: flex-end;">
+            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; padding-bottom: 0.6rem;">
+              <input type="checkbox" id="notify-vibrate" checked />
+              <span>Activar vibración</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button id="btn-req-notify" type="button" class="btn btn-blue">Solicitar permiso</button>
+          <button id="btn-send-notify" type="button" class="btn btn-green">Enviar notificación</button>
+          <button id="btn-delay-notify" type="button" class="btn btn-yellow">Programar (3 seg)</button>
+          <button id="btn-reset-notify" type="button" class="btn btn-red">Restablecer</button>
+        </div>
+
+        <div id="notify-error" class="alert alert-danger hidden" role="alert"></div>
+        <div id="notify-success" class="alert alert-success hidden" role="status"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         EJERCICIO 4
+         ========================================== -->
+    <section id="view-ejercicio4" class="view-section">
+      <div class="card">
+        <div class="card-header-row">
+          <h2 class="card-title">Ejercicio 4</h2>
+          <div>
+            <span id="idb-status-badge" class="badge badge-green">IndexedDB Activa</span>
+            <span id="idb-counter-badge" class="badge badge-blue" style="margin-left: 0.5rem;">0 registros</span>
+          </div>
+        </div>
+
+        <form id="idb-form" onsubmit="return false;">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="idb-nombre">Nombre</label>
+              <input type="text" id="idb-nombre" class="form-control" placeholder="Nombre completo" required />
+            </div>
+            <div class="form-group">
+              <label for="idb-matricula">Matrícula</label>
+              <input type="text" id="idb-matricula" class="form-control" placeholder="Matrícula o código" required />
+            </div>
+            <div class="form-group">
+              <label for="idb-carrera">Carrera</label>
+              <input type="text" id="idb-carrera" class="form-control" placeholder="Carrera o especialidad" required />
+            </div>
+            <div class="form-group">
+              <label for="idb-observaciones">Observaciones</label>
+              <input type="text" id="idb-observaciones" class="form-control" placeholder="Detalle u observación" />
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button id="btn-idb-save" type="submit" class="btn btn-green">Guardar registro</button>
+            <button id="btn-idb-refresh" type="button" class="btn btn-blue">Actualizar lista</button>
+            <button id="btn-idb-sample" type="button" class="btn btn-yellow">Cargar datos demo</button>
+            <button id="btn-idb-clear-all" type="button" class="btn btn-red">Eliminar todos</button>
+          </div>
+        </form>
+
+        <div id="idb-alert" class="alert alert-info hidden"></div>
+
+        <div class="table-container">
+          <table class="records-table">
+            <thead>
+              <tr>
+                <th style="width: 60px;">ID</th>
+                <th>Nombre</th>
+                <th>Matrícula</th>
+                <th>Carrera</th>
+                <th>Observaciones</th>
+                <th>Fecha</th>
+                <th style="width: 100px; text-align: center;">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="idb-tbody">
+              <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                  No hay registros guardados.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         EJERCICIO 5
+         ========================================== -->
+    <section id="view-ejercicio5" class="view-section">
+      <div class="card">
+        <div class="card-header-row">
+          <h2 class="card-title">Ejercicio 5</h2>
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <span id="cache-source-badge" class="badge badge-yellow">Sin consulta</span>
+            <span id="mock-offline-badge" class="badge badge-red hidden">Offline Simulado</span>
+            <span id="cache-time-info" style="font-size: 0.85rem; color: var(--text-muted); margin-left: 0.5rem;"></span>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button id="btn-fetch-api" type="button" class="btn btn-blue">Consumir API</button>
+          <button id="btn-load-cache" type="button" class="btn btn-green">Cargar de IndexedDB</button>
+          <button id="btn-toggle-offline" type="button" class="btn btn-yellow">Simular offline</button>
+          <button id="btn-clear-api-cache" type="button" class="btn btn-red">Limpiar caché</button>
+        </div>
+
+        <div id="api-alert" class="alert alert-info hidden"></div>
+
+        <div id="posts-container" class="posts-grid">
+          <p style="grid-column: 1 / -1; color: var(--text-muted); text-align: center; padding: 2.5rem 0;">
+            Presiona "Consumir API" para cargar las publicaciones.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

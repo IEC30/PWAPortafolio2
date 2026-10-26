@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sin conexión — PWA Unidad 2</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f8fafc;
+      color: #0f172a;
+      text-align: center;
+      padding: 1.5rem;
+    }
+    .offline-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 2rem;
+      max-width: 420px;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+    }
+    .icon {
+      font-size: 3rem;
+      margin-bottom: 0.75rem;
+    }
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+    .btn-blue {
+      padding: 0.75rem 1.4rem;
+      border: 0;
+      border-radius: 8px;
+      background: #2563eb;
+      color: #ffffff;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+    .btn-blue:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-card">
+    <div class="icon">📡</div>
+    <h1>Sin Conexión a Internet</h1>
+    <p>
+      Estás navegando en modo offline. Puedes seguir usando los datos persistidos en <strong>IndexedDB</strong> y las funcionalidades locales de la aplicación.
+    </p>
+    <button class="btn-blue" onclick="location.reload()">Reintentar Conexión</button>
+  </div>
+</body>
+</html>
